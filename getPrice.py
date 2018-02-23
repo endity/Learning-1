@@ -8,7 +8,7 @@ import datetime as dt
 def getPrice(site):
     """
     Function to get price from the site
-    Return the lowest bottle price
+    Return the lowest price for 750mL bottle
     """
 
     source = urllib.request.urlopen(site).read()
@@ -16,7 +16,7 @@ def getPrice(site):
 
     # BEAUTIFULSOUP SCRAPPING
     soup = bs.BeautifulSoup(source, 'html5lib')
-    title = soup.find('title').string
+    title = soup.find('title').string # Wine name
     title = title[:-26]
     table = soup.find('table', {'id': "wine_list"})
     div = soup.find('div', {'id': "winesortlist"})
@@ -42,33 +42,32 @@ def getPrice(site):
     # type(table)
     # print(rating)
 
-    for i in table.findAll('span', {'class':"offer_price"}):
+    for i in table.findAll('span', {'class':"offer_price"}): # Find the price
         price = i.text.replace('\n', '')
         prices.append(price)
 
-    if not prices:
+    if not prices:  # If doesn't found the price of that vintage
         with open('winePrice.csv', 'a', newline='', encoding = 'utf-8') as f:
             writer = csv.writer(f)
             writer.writerow([today, title, "Not Found", "N/A"])
         return None
 
-    for j in table.findAll('span', {'class':"offer_btl"}):
+    for j in table.findAll('span', {'class':"offer_btl"}): # Find the format of bottle
         btlformat = j.text
         btlformats.append(btlformat)
 
-    dictionary = dict(zip(prices, btlformats))
+    dictionary = dict(zip(prices, btlformats)) # Merge the price + format
 
     for k, value in dictionary.items():
         if not value == 'Half Bottle' and value == 'Bottle':
             alist.append(k)
 
-    with open('winePrice.csv', 'a', newline='', encoding = 'utf-8') as f:
+    with open('winePrice2.csv', 'a', newline='', encoding = 'utf-8') as f:
         writer = csv.writer(f)
         writer.writerow([today, title, str(alist), rating])
 
-
-
 #getPrice('https://www.wine-searcher.com/find/forts+de+latour/2016/france')
+
 # WRITE IN A NEW TXT FILE
 # f = open("{}.txt".format(title.string), 'w+', encoding='utf-8')
 # f.truncate()

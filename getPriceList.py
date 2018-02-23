@@ -1,6 +1,6 @@
 from xlrd import open_workbook
 
-book = open_workbook("ChateauReference.xls")
+book = open_workbook("/Users/nguyenducthanh/code/Wine project/ChateauReference.xls")
 sheet = book.sheet_by_index(0) #First sheet
 
 WineReference = []
